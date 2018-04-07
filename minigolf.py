@@ -29,6 +29,7 @@ class HitsMatch(StandRules):
             self._append_to_table()
             self._cleaner_list()
             self._counter_for_holes += 1
+            self._counter_for_peoples = self._counter_for_holes
             if self._counter_for_holes > self._numb_of_holes:
                 self.finished = True
 
@@ -67,7 +68,6 @@ class HolesMatch(StandRules):
                 self._append_to_table()
                 self._cleaner_list()
                 self._counter_for_holes += 1
-                print(self._counter_for_holes)
                 self._counter_for_peoples = self._counter_for_holes - 1
                 self.tries = 0
                 self.flag = True
