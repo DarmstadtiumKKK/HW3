@@ -30,6 +30,8 @@ class HitsMatch(StandRules):
             self._cleaner_list()
             self._counter_for_holes += 1
             self._counter_for_peoples = self._counter_for_holes
+            while self._counter_for_peoples > self._count_of_people:
+                self._counter_for_peoples -= self._count_of_people
             if self._counter_for_holes > self._numb_of_holes:
                 self.finished = True
 
