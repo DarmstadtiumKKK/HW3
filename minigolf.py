@@ -7,82 +7,45 @@ class Player:
 
 
 class HitsMatch(StandRules):
-    def hit(self, result=False):
-        if self.finished:
-            raise RuntimeError('Match ended')
-        while self._list_of_turn[self._counter_for_peoples - 1] == 'no':
-            self._counter_for_peoples += 1
-            if self._counter_for_peoples > self._count_of_people:
-                self._counter_for_peoples = 1
+    def _processing(self,result):
         if result:
-            self._list_of_turn[self._counter_for_peoples - 1] = 'no'
-        self._current_list[self._counter_for_peoples - 1] += 1
-        if self._list_of_turn[self._counter_for_peoples - 1] == 'yes' and self._current_list[
-            self._counter_for_peoples - 1] == self.limit - 1:
-            self._list_of_turn[self._counter_for_peoples - 1] = 'no'
-            self._current_list[self._counter_for_peoples - 1] = self.limit
+            self._list_of_turn[self._counter_for_peoples - 1] = True
+            self._current_list[self._counter_for_peoples - 1] += 1
         else:
-            self._counter_for_peoples += 1
-        if self._counter_for_peoples > self._count_of_people:
-            self._counter_for_peoples = 1
-        if all(self._list_of_turn[i] == 'no' for i in range(self._count_of_people)):
-            self._append_to_table()
-            self._cleaner_list()
-            self._counter_for_holes += 1
-            self._counter_for_peoples = self._counter_for_holes
-            while self._counter_for_peoples > self._count_of_people:
-                self._counter_for_peoples -= self._count_of_people
-            if self._counter_for_holes > self._numb_of_holes:
-                self.finished = True
+            if self._current_list[self._counter_for_peoples - 1] == self.limit - 2:
+                self._list_of_turn[self._counter_for_peoples - 1] = True
+                self._current_list[self._counter_for_peoples - 1] = self.limit
+                self._counter_for_peoples -= 1
+            else:
+                self._current_list[self._counter_for_peoples - 1] += 1
+
+    def _end_checker(self):
+        if all(self._list_of_turn[i] for i in range(self._count_of_people)):
+            self._end_of_turn()
 
     def _get_num(self, diction):
-        vals = list(diction.values())
-        minimum = vals[0]
-        for i in range(1, len(vals)):
-            if vals[i] < minimum:
-                minimum = vals[i]
-        return minimum
+        return min(list(diction.values()))
 
 
 class HolesMatch(StandRules):
-    flag = True
+    _hit_registrated = False
 
-    tries = 0
+    _tries = 0
 
-    def hit(self, result=False):
-
-        if self.finished:
-            raise RuntimeError('Match ended')
-        while self._list_of_turn[self._counter_for_peoples - 1] == 'no':
-            self._counter_for_peoples += 1
-            if self._counter_for_peoples > self._count_of_people:
-                self._counter_for_peoples = 1
+    def _processing(self,result):
         if result:
-            self.flag = False
+            self._hit_registrated = True
             self.tries = 0
             self._current_list[self._counter_for_peoples - 1] += 1
-        self._list_of_turn[self._counter_for_peoples - 1] = 'no'
-        if all(self._list_of_turn[i] == 'no' for i in range(self._count_of_people)):
-            self.tries += 1
-            if self.flag and self.tries < self.limit:
-                self._list_of_turn = ['Yes'] * self._count_of_people
+        self._list_of_turn[self._counter_for_peoples - 1] = True
+
+    def _end_checker(self):
+        if all(self._list_of_turn[i] for i in range(self._count_of_people)):
+            self._tries += 1
+            if not self._hit_registrated and self._tries < self.limit:
+                self._list_of_turn = [False] * self._count_of_people
             else:
-                self._append_to_table()
-                self._cleaner_list()
-                self._counter_for_holes += 1
-                self._counter_for_peoples = self._counter_for_holes - 1
-                self.tries = 0
-                self.flag = True
-                if self._counter_for_holes == self._numb_of_holes + 1:
-                    self.finished = True
-        self._counter_for_peoples += 1
-        if self._counter_for_peoples > self._count_of_people:
-            self._counter_for_peoples = 1
+                self._end_of_turn()
 
     def _get_num(self, diction):
-        vals = list(diction.values())
-        minimum = vals[0]
-        for i in range(1, len(vals)):
-            if vals[i] > minimum:
-                minimum = vals[i]
-        return minimum
+        return max(list(diction.values()))
