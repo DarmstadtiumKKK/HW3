@@ -46,6 +46,8 @@ class HolesMatch(StandRules):
                 self._list_of_turn = [False] * self._count_of_people
             else:
                 self._end_of_turn()
+                self._tries = 0
+                self._hit_registrated = False
 
     def _get_num(self, diction):
         return max(list(diction.values()))
