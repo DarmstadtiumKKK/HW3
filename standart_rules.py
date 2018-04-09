@@ -5,11 +5,11 @@ from copy import deepcopy
 
 class StandRules(metaclass=ABCMeta):
     limit = 10
-    _counter_for_holes = 1
-    _counter_for_peoples = 1
-    finished = False
 
     def __init__(self, numb_of_holes, player_list):
+        self._counter_for_holes = 1
+        self._counter_for_peoples = 1
+        self.finished = False
         self._numb_of_holes = numb_of_holes
         self._player_list = player_list
         self._count_of_people = len(player_list)
